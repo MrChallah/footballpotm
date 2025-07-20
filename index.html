@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenya Football Player of the Match</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kick-green': '#53fc18',
+                        'kick-dark': '#0f0f23',
+                        'kick-gray': '#1a1a2e'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-transparent font-mono">
+    <!-- Main Player Container -->
+    <div class="relative w-screen h-screen overflow-hidden">
+        <!-- Player Display - Scalable Position -->
+        <div id="player-container" class="absolute top-4 right-4 z-10 transition-all duration-300">
+            <div id="player-board" class="bg-kick-dark border-2 border-kick-green rounded-xl p-2 shadow-2xl w-60">
+                
+                <!-- Player Header -->
+                <div class="text-center mb-2">
+                    <!-- Player of the Match Badge -->
+                    <div class="bg-gradient-to-r from-kick-green to-kick-green text-kick-dark text-center py-1 rounded-lg mb-2">
+                        <h2 class="text-sm font-bold">PLAYER OF THE MATCH</h2>
+                    </div>
+                    
+                    <!-- Player Details -->
+                    <div class="space-y-1">
+                        <!-- Player Name -->
+                        <div id="player-name" onclick="editPlayerName()" class="text-kick-green text-lg font-bold cursor-pointer hover:text-white transition-colors">PLAYER NAME</div>
+                        
+                        <!-- Jersey Number and Team -->
+                        <div class="flex justify-center items-center space-x-2">
+                            <div class="flex items-center space-x-1">
+                                <span class="text-white text-sm">#</span>
+                                <div id="jersey-number" onclick="editJerseyNumber()" class="text-white text-sm font-bold cursor-pointer hover:text-kick-green transition-colors min-w-[1.5rem] text-center">10</div>
+                            </div>
+                            <span class="text-kick-green">|</span>
+                            <div id="player-team" onclick="editPlayerTeam()" class="text-kick-green text-sm font-bold cursor-pointer hover:text-white transition-colors">MOMBASA</div>
+                        </div>
+                        
+                        <!-- Position -->
+                        <div id="player-position" onclick="togglePositionMenu()" class="text-white text-xs cursor-pointer hover:text-kick-green transition-colors">MIDFIELDER</div>
+                        
+                        <!-- Position Menu (Hidden by default) -->
+                        <div id="position-menu" class="absolute top-32 left-1/2 transform -translate-x-1/2 bg-kick-dark border border-kick-green rounded hidden min-w-[120px] z-20">
+                            <button onclick="setPosition('GOALKEEPER')" class="block w-full text-left px-3 py-2 text-white hover:bg-kick-gray text-xs">GOALKEEPER</button>
+                            <button onclick="setPosition('DEFENDER')" class="block w-full text-left px-3 py-2 text-white hover:bg-kick-gray text-xs">DEFENDER</button>
+                            <button onclick="setPosition('MIDFIELDER')" class="block w-full text-left px-3 py-2 text-white hover:bg-kick-gray text-xs">MIDFIELDER</button>
+                            <button onclick="setPosition('FORWARD')" class="block w-full text-left px-3 py-2 text-white hover:bg-kick-gray text-xs">FORWARD</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Statistics -->
+                <div class="space-y-1">
+                    <!-- Goals -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">GOALS</div>
+                        <div id="player-goals" onclick="editStat('player-goals')" class="bg-green-600 text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-green-500 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- Assists -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">ASSISTS</div>
+                        <div id="player-assists" onclick="editStat('player-assists')" class="bg-blue-600 text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-blue-500 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- Shots -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">SHOTS</div>
+                        <div id="player-shots" onclick="editStat('player-shots')" class="bg-kick-gray text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-gray-600 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- On Target -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">ON TARGET</div>
+                        <div id="player-ontarget" onclick="editStat('player-ontarget')" class="bg-kick-gray text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-gray-600 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- Passes -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">PASSES</div>
+                        <div id="player-passes" onclick="editStat('player-passes')" class="bg-kick-gray text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-gray-600 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- Pass Accuracy -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">ACCURACY</div>
+                        <div id="player-accuracy" onclick="editStat('player-accuracy')" class="bg-kick-gray text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-gray-600 transition-colors col-span-2">0%</div>
+                    </div>
+
+                    <!-- Tackles -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">TACKLES</div>
+                        <div id="player-tackles" onclick="editStat('player-tackles')" class="bg-kick-gray text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-gray-600 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- Yellow Cards -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">YELLOW</div>
+                        <div id="player-yellow" onclick="editStat('player-yellow')" class="bg-yellow-500 text-black text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-yellow-400 transition-colors col-span-2">0</div>
+                    </div>
+
+                    <!-- Red Cards -->
+                    <div class="grid grid-cols-3 gap-1 items-center">
+                        <div class="bg-kick-gray text-kick-green text-center py-1 rounded text-xs font-bold">RED</div>
+                        <div id="player-red" onclick="editStat('player-red')" class="bg-red-600 text-white text-center py-1 rounded text-xs font-bold cursor-pointer hover:bg-red-500 transition-colors col-span-2">0</div>
+                    </div>
+                </div>
+
+                <!-- Control Panel -->
+                <div id="control-panel" class="hidden mt-2 text-center space-x-1">
+                    <button onclick="resetPlayer()" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-bold">RESET</button>
+                    <button onclick="hidePlayerBoard()" class="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold" id="hide-btn">HIDE</button>
+                    <button onclick="toggleLayout()" class="bg-kick-green hover:bg-green-400 text-kick-dark px-2 py-1 rounded text-xs font-bold" id="layout-btn">EXPAND</button>
+                    <button onclick="exportPlayer()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-bold">EXPORT</button>
+                </div>
+
+                <!-- Number Input Controls (Hidden by default) -->
+                <div id="number-controls" class="hidden mt-2 text-center">
+                    <div class="text-kick-green text-xs font-bold mb-1">EDIT VALUE</div>
+                    <div class="flex justify-center items-center space-x-1 mb-2">
+                        <button onclick="adjustCurrentStat(-10)" class="bg-red-600 hover:bg-red-700 text-white px-1 py-1 rounded text-xs font-bold w-8">-10</button>
+                        <button onclick="adjustCurrentStat(-5)" class="bg-red-500 hover:bg-red-600 text-white px-1 py-1 rounded text-xs font-bold w-7">-5</button>
+                        <button onclick="adjustCurrentStat(-1)" class="bg-red-400 hover:bg-red-500 text-white px-1 py-1 rounded text-xs font-bold w-6">-1</button>
+                        <span id="current-stat-display" class="text-white text-lg font-bold min-w-[2rem] text-center mx-1">0</span>
+                        <button onclick="adjustCurrentStat(1)" class="bg-kick-green hover:bg-green-400 text-kick-dark px-1 py-1 rounded text-xs font-bold w-6">+1</button>
+                        <button onclick="adjustCurrentStat(5)" class="bg-green-500 hover:bg-green-600 text-white px-1 py-1 rounded text-xs font-bold w-7">+5</button>
+                        <button onclick="adjustCurrentStat(10)" class="bg-green-600 hover:bg-green-700 text-white px-1 py-1 rounded text-xs font-bold w-8">+10</button>
+                    </div>
+                    <div class="space-x-1">
+                        <button onclick="saveStat()" class="bg-kick-green hover:bg-green-400 text-kick-dark px-2 py-1 rounded text-xs font-bold">SAVE</button>
+                        <button onclick="cancelEdit()" class="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">CANCEL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- On-Screen Keyboard -->
+        <div id="keyboard-overlay" class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-30 hidden">
+            <div class="bg-kick-dark border-2 border-kick-green rounded-xl p-6 max-w-lg">
+                <div class="text-center mb-4">
+                    <div class="text-kick-green text-lg font-bold" id="keyboard-title">EDIT PLAYER NAME</div>
+                    <input id="text-input" type="text" class="bg-kick-gray text-white text-center text-xl font-bold px-4 py-2 mt-2 rounded border border-kick-green focus:outline-none focus:border-white" maxlength="20" readonly>
+                </div>
+                
+                <!-- Keyboard -->
+                <div class="space-y-2">
+                    <!-- Row 1 -->
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="typeChar('Q')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">Q</button>
+                        <button onclick="typeChar('W')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">W</button>
+                        <button onclick="typeChar('E')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">E</button>
+                        <button onclick="typeChar('R')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">R</button>
+                        <button onclick="typeChar('T')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">T</button>
+                        <button onclick="typeChar('Y')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">Y</button>
+                        <button onclick="typeChar('U')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">U</button>
+                        <button onclick="typeChar('I')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">I</button>
+                        <button onclick="typeChar('O')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">O</button>
+                        <button onclick="typeChar('P')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">P</button>
+                    </div>
+                    
+                    <!-- Row 2 -->
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="typeChar('A')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">A</button>
+                        <button onclick="typeChar('S')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">S</button>
+                        <button onclick="typeChar('D')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">D</button>
+                        <button onclick="typeChar('F')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">F</button>
+                        <button onclick="typeChar('G')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">G</button>
+                        <button onclick="typeChar('H')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">H</button>
+                        <button onclick="typeChar('J')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">J</button>
+                        <button onclick="typeChar('K')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">K</button>
+                        <button onclick="typeChar('L')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">L</button>
+                    </div>
+                    
+                    <!-- Row 3 -->
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="typeChar('Z')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">Z</button>
+                        <button onclick="typeChar('X')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">X</button>
+                        <button onclick="typeChar('C')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">C</button>
+                        <button onclick="typeChar('V')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">V</button>
+                        <button onclick="typeChar('B')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">B</button>
+                        <button onclick="typeChar('N')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">N</button>
+                        <button onclick="typeChar('M')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">M</button>
+                        <button onclick="typeChar(' ')" class="bg-kick-gray hover:bg-gray-600 text-white w-16 h-10 rounded font-bold">SPACE</button>
+                    </div>
+                    
+                    <!-- Numbers -->
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="typeChar('1')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">1</button>
+                        <button onclick="typeChar('2')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">2</button>
+                        <button onclick="typeChar('3')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">3</button>
+                        <button onclick="typeChar('4')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">4</button>
+                        <button onclick="typeChar('5')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">5</button>
+                        <button onclick="typeChar('6')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">6</button>
+                        <button onclick="typeChar('7')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">7</button>
+                        <button onclick="typeChar('8')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">8</button>
+                        <button onclick="typeChar('9')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">9</button>
+                        <button onclick="typeChar('0')" class="bg-kick-gray hover:bg-gray-600 text-white w-10 h-10 rounded font-bold">0</button>
+                    </div>
+                    
+                    <!-- Control Buttons -->
+                    <div class="flex justify-center space-x-2 mt-4">
+                        <button onclick="backspace()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold">BACKSPACE</button>
+                        <button onclick="clearInput()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded font-bold">CLEAR</button>
+                        <button onclick="saveText()" class="bg-kick-green hover:bg-green-400 text-kick-dark px-4 py-2 rounded font-bold">SAVE</button>
+                        <button onclick="cancelTextEdit()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded font-bold">CANCEL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let playerData = {
+            name: 'PLAYER NAME',
+            jerseyNumber: 10,
+            team: 'MOMBASA',
+            position: 'MIDFIELDER',
+            stats: {
+                'player-goals': 0,
+                'player-assists': 0,
+                'player-shots': 0,
+                'player-ontarget': 0,
+                'player-passes': 0,
+                'player-accuracy': 0,
+                'player-tackles': 0,
+                'player-yellow': 0,
+                'player-red': 0
+            },
+            overlayVisible: true,
+            isExpanded: false
+        };
+
+        let currentEditingField = null;
+        let currentEditingStat = null;
+        let currentStatValue = 0;
+
+        function updateDisplay() {
+            document.getElementById('player-name').textContent = playerData.name;
+            document.getElementById('jersey-number').textContent = playerData.jerseyNumber;
+            document.getElementById('player-team').textContent = playerData.team;
+            document.getElementById('player-position').textContent = playerData.position;
+
+            // Update all statistics
+            for (const [statKey, value] of Object.entries(playerData.stats)) {
+                const element = document.getElementById(statKey);
+                if (element) {
+                    if (statKey === 'player-accuracy') {
+                        element.textContent = value + '%';
+                    } else {
+                        element.textContent = value;
+                    }
+                }
+            }
+        }
+
+        function hideAllControls() {
+            document.getElementById('control-panel').classList.add('hidden');
+            document.getElementById('number-controls').classList.add('hidden');
+            document.getElementById('position-menu').classList.add('hidden');
+        }
+
+        // Text Editing Functions
+        function editPlayerName() {
+            hideAllControls();
+            currentEditingField = 'name';
+            showKeyboard('EDIT PLAYER NAME', playerData.name);
+            document.getElementById('control-panel').classList.remove('hidden');
+        }
+
+        function editJerseyNumber() {
+            hideAllControls();
+            currentEditingField = 'jersey';
+            showKeyboard('EDIT JERSEY NUMBER', playerData.jerseyNumber.toString());
+            document.getElementById('control-panel').classList.remove('hidden');
+        }
+
+        function editPlayerTeam() {
+            hideAllControls();
+            currentEditingField = 'team';
+            showKeyboard('EDIT TEAM NAME', playerData.team);
+            document.getElementById('control-panel').classList.remove('hidden');
+        }
+
+        function showKeyboard(title, currentValue) {
+            const keyboardOverlay = document.getElementById('keyboard-overlay');
+            const input = document.getElementById('text-input');
+            const titleElement = document.getElementById('keyboard-title');
+            
+            titleElement.textContent = title;
+            input.value = currentValue;
+            keyboardOverlay.classList.remove('hidden');
+        }
+
+        function typeChar(char) {
+            const input = document.getElementById('text-input');
+            if (input.value.length < 20) {
+                input.value += char;
+            }
+        }
+
+        function backspace() {
+            const input = document.getElementById('text-input');
+            input.value = input.value.slice(0, -1);
+        }
+
+        function clearInput() {
+            const input = document.getElementById('text-input');
+            input.value = '';
+        }
+
+        function saveText() {
+            const input = document.getElementById('text-input');
+            const newValue = input.value.trim().toUpperCase();
+            
+            if (newValue.length > 0) {
+                if (currentEditingField === 'name') {
+                    playerData.name = newValue;
+                } else if (currentEditingField === 'jersey') {
+                    const number = parseInt(newValue);
+                    if (!isNaN(number) && number >= 0 && number <= 99) {
+                        playerData.jerseyNumber = number;
+                    }
+                } else if (currentEditingField === 'team') {
+                    playerData.team = newValue;
+                }
+                updateDisplay();
+            }
+            
+            cancelTextEdit();
+        }
+
+        function cancelTextEdit() {
+            const keyboardOverlay = document.getElementById('keyboard-overlay');
+            keyboardOverlay.classList.add('hidden');
+            currentEditingField = null;
+        }
+
+        // Position Menu Functions
+        function togglePositionMenu() {
+            hideAllControls();
+            const menu = document.getElementById('position-menu');
+            menu.classList.remove('hidden');
+            document.getElementById('control-panel').classList.remove('hidden');
+        }
+
+        function setPosition(position) {
+            playerData.position = position;
+            hideAllControls();
+            updateDisplay();
+        }
+
+        // Statistics Editing
+        function editStat(statId) {
+            hideAllControls();
+            currentEditingStat = statId;
+            currentStatValue = playerData.stats[statId];
+            
+            document.getElementById('current-stat-display').textContent = currentStatValue;
+            document.getElementById('number-controls').classList.remove('hidden');
+            document.getElementById('control-panel').classList.remove('hidden');
+        }
+
+        function adjustCurrentStat(delta) {
+            if (currentEditingStat) {
+                currentStatValue = Math.max(0, currentStatValue + delta);
+                
+                // Special handling for accuracy percentage
+                if (currentEditingStat === 'player-accuracy') {
+                    currentStatValue = Math.min(100, currentStatValue);
+                }
+                
+                document.getElementById('current-stat-display').textContent = currentStatValue;
+            }
+        }
+
+        function saveStat() {
+            if (currentEditingStat) {
+                playerData.stats[currentEditingStat] = currentStatValue;
+                updateDisplay();
+                hideAllControls();
+            }
+        }
+
+        function cancelEdit() {
+            hideAllControls();
+            currentEditingStat = null;
+            currentStatValue = 0;
+        }
+
+        // Layout Functions
+        function toggleLayout() {
+            const container = document.getElementById('player-container');
+            const board = document.getElementById('player-board');
+            const btn = document.getElementById('layout-btn');
+            
+            if (playerData.isExpanded) {
+                // Switch to compact mode (top-right)
+                container.className = 'absolute top-4 right-4 z-10 transition-all duration-300';
+                board.className = 'bg-kick-dark border-2 border-kick-green rounded-xl p-2 shadow-2xl w-60';
+                btn.textContent = 'EXPAND';
+                playerData.isExpanded = false;
+            } else {
+                // Switch to expanded mode (center, much larger)
+                container.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300';
+                board.className = 'bg-kick-dark border-2 border-kick-green rounded-xl p-8 shadow-2xl w-[600px] min-w-[600px]';
+                btn.textContent = 'COMPACT';
+                playerData.isExpanded = true;
+            }
+        }
+
+        function resetPlayer() {
+            playerData = {
+                name: 'PLAYER NAME',
+                jerseyNumber: 10,
+                team: 'MOMBASA',
+                position: 'MIDFIELDER',
+                stats: {
+                    'player-goals': 0,
+                    'player-assists': 0,
+                    'player-shots': 0,
+                    'player-ontarget': 0,
+                    'player-passes': 0,
+                    'player-accuracy': 0,
+                    'player-tackles': 0,
+                    'player-yellow': 0,
+                    'player-red': 0
+                },
+                overlayVisible: true,
+                isExpanded: false
+            };
+            
+            // Reset to compact layout
+            const container = document.getElementById('player-container');
+            const board = document.getElementById('player-board');
+            const btn = document.getElementById('layout-btn');
+            container.className = 'absolute top-4 right-4 z-10 transition-all duration-300';
+            board.className = 'bg-kick-dark border-2 border-kick-green rounded-xl p-2 shadow-2xl w-60';
+            btn.textContent = 'EXPAND';
+            
+            updateDisplay();
+            hideAllControls();
+        }
+
+        function hidePlayerBoard() {
+            const mainBoard = document.getElementById('player-board');
+            const btn = document.getElementById('hide-btn');
+            
+            if (playerData.overlayVisible) {
+                mainBoard.style.opacity = '0.1';
+                btn.textContent = 'SHOW';
+                playerData.overlayVisible = false;
+            } else {
+                mainBoard.style.opacity = '1';
+                btn.textContent = 'HIDE';
+                playerData.overlayVisible = true;
+            }
+        }
+
+        function exportPlayer() {
+            const statsText = `PLAYER OF THE MATCH\n${playerData.name} (#${playerData.jerseyNumber}) - ${playerData.team}\nPosition: ${playerData.position}\n\nGoals: ${playerData.stats['player-goals']}\nAssists: ${playerData.stats['player-assists']}\nShots: ${playerData.stats['player-shots']}\nOn Target: ${playerData.stats['player-ontarget']}\nPasses: ${playerData.stats['player-passes']}\nPass Accuracy: ${playerData.stats['player-accuracy']}%\nTackles: ${playerData.stats['player-tackles']}\nYellow Cards: ${playerData.stats['player-yellow']}\nRed Cards: ${playerData.stats['player-red']}`;
+            
+            navigator.clipboard.writeText(statsText).then(() => {
+                alert('Player stats copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy player stats');
+            });
+        }
+
+        // Close controls when clicking outside
+        document.addEventListener('click', function(event) {
+            const mainBoard = document.getElementById('player-board');
+            const keyboardOverlay = document.getElementById('keyboard-overlay');
+            
+            if (!keyboardOverlay.classList.contains('hidden')) {
+                return;
+            }
+            
+            if (!mainBoard.contains(event.target)) {
+                hideAllControls();
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html> 

@@ -23,7 +23,7 @@
     <!-- Main Player Container -->
     <div class="relative w-screen h-screen overflow-hidden">
         <!-- Player Display - Scalable Position -->
-        <div id="player-container" class="absolute top-4 right-4 z-10 transition-all duration-300">
+        <div id="player-container" class="absolute bottom-4 right-4 z-10 transition-all duration-300">
             <div id="player-board" class="bg-kick-dark border-2 border-kick-green rounded-xl p-2 shadow-2xl w-60">
                 
                 <!-- Player Header -->
@@ -406,8 +406,8 @@
             const btn = document.getElementById('layout-btn');
             
             if (playerData.isExpanded) {
-                // Switch to compact mode (top-right)
-                container.className = 'absolute top-4 right-4 z-10 transition-all duration-300';
+                // Switch to compact mode (bottom-right)
+                container.className = 'absolute bottom-4 right-4 z-10 transition-all duration-300';
                 board.className = 'bg-kick-dark border-2 border-kick-green rounded-xl p-2 shadow-2xl w-60';
                 btn.textContent = 'EXPAND';
                 playerData.isExpanded = false;
@@ -445,7 +445,7 @@
             const container = document.getElementById('player-container');
             const board = document.getElementById('player-board');
             const btn = document.getElementById('layout-btn');
-            container.className = 'absolute top-4 right-4 z-10 transition-all duration-300';
+            container.className = 'absolute bottom-4 right-4 z-10 transition-all duration-300';
             board.className = 'bg-kick-dark border-2 border-kick-green rounded-xl p-2 shadow-2xl w-60';
             btn.textContent = 'EXPAND';
             
